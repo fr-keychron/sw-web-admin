@@ -1,0 +1,164 @@
+<div class="global-container">
+	<common-header [title]='title'/>
+
+	<div class='global-table-container'>
+		<button
+			nz-button
+			nzType='primary'
+			class='global-add-btn'
+			(click)="add()"
+		>
+			新增
+		</button>
+		<nz-table #basicTable [nzData]='tableData' nzShowPagination='false'>
+			<thead>
+			<tr>
+				<th>固件版本</th>
+				<th>发布日期</th>
+				<th>固件大小</th>
+				<th>操作</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr *ngFor='let data of basicTable.data'>
+				<td>{{ data.version }}</td>
+				<td>{{ data.createTime | date }}</td>
+				<td>{{ data.size }}KB</td>
+				<td>
+					<button nz-button nzType="primary" nzSize="small"
+					        (click)="edit(data)"
+					>
+						编辑
+					</button>
+
+					<button nz-button nzType="default" nzDanger nzSize="small"
+					        nz-popconfirm
+					        nzPopconfirmTitle="一旦删除，该数据不可恢复"
+					        nzPopconfirmPlacement="top"
+					        (nzOnConfirm)="del(data)"
+					>
+						删除
+					</button>
+				</td>
+			</tr>
+			</tbody>
+		</nz-table>
+
+		<div class = 'pagination'>
+			<nz-pagination [nzPageIndex]="query.pageNumber" [nzTotal]="total" nzShowSizeChanger [nzPageSize]="query.pageSize"
+			               (nzPageIndexChange)="pageChange($event,'number')" (nzPageSizeChange)="pageChange($event, 'page')"
+			/>
+		</div>
+	</div>
+</div>
+
+
+
+<nz-modal
+	[(nzVisible)]='modal'
+	[nzTitle]='modalTitle'
+	[nzContent]='modalContent'
+	[nzFooter]='modalFooter'
+	(nzOnCancel)='modal = false'
+>
+	<ng-template #modalTitle>新增/编辑</ng-template>
+
+	<ng-template #modalContent>
+		<div class='global-form'>
+			<form nz-form [formGroup]='form'>
+				<nz-form-item>
+					<nz-form-label [nzSpan]='6' nzRequired>
+						版本
+					</nz-form-label>
+					<nz-form-control
+						[nzSpan]='18'
+						nzHasFeedback
+						nzValidatingTip='Validating...'
+						[nzErrorTip]='nameErrTpl'
+					>
+						<input
+							nz-input
+							formControlName='version'
+							placeholder='请输入固件版本'
+						/>
+						<ng-template #nameErrTpl let-control>
+							<ng-container *ngIf="control.hasError('required')">
+								请输入固件版本
+							</ng-container>
+						</ng-template>
+					</nz-form-control>
+				</nz-form-item>
+
+				<nz-form-item>
+					<nz-form-label [nzSpan]='6' nzRequired>
+						固件
+					</nz-form-label>
+					<nz-form-control [nzSpan]='18'>
+						<div class="img-selection" (click)="selectInput()">
+							<div *ngIf="!firmwareName">选择固件</div>
+							<span *ngIf="firmwareName">
+								{{ firmwareName }}
+							</span>
+							<input type="file" accept=".bin" #inputEle (change)="inputFileChange($event)">
+						</div>
+					</nz-form-control>
+				</nz-form-item>
+
+				<nz-form-item>
+					<nz-form-label [nzSpan]='6'>
+						更新说明
+					</nz-form-label>
+					<nz-form-control
+						[nzSpan]='18'
+						nzHasFeedback
+						nzValidatingTip='Validating...'
+						[nzErrorTip]='nameErrTpl'
+					>
+
+						<nz-tabset>
+							<nz-tab nzTitle="中文">
+								 <textarea
+									 nz-input
+									 placeholder="请输入更新说明"
+									 formControlName="descZh"
+									 [nzAutosize]="{ minRows: 4, maxRows: 6 }"
+								 ></textarea>
+								<ng-template #nameErrTpl let-control>
+									<ng-container *ngIf="control.hasError('required')">
+										请输入固件版本
+									</ng-container>
+								</ng-template>
+							</nz-tab>
+							<nz-tab nzTitle="英文">
+								 <textarea
+									 nz-input
+									 placeholder="请输入更新说明"
+									 formControlName="descEn"
+									 [nzAutosize]="{ minRows: 4, maxRows: 6 }"
+								 ></textarea>
+								<ng-template #nameErrTpl let-control>
+									<ng-container *ngIf="control.hasError('required')">
+										请输入固件版本
+									</ng-container>
+								</ng-template>
+							</nz-tab>
+						</nz-tabset>
+					</nz-form-control>
+				</nz-form-item>
+			</form>
+		</div>
+	</ng-template>
+
+	<ng-template #modalFooter>
+		<button
+			nz-button
+			nzType='primary'
+			(click)='confirm()'
+			[nzLoading]='loading'
+			[disabled]="!form.valid"
+		>
+			确定
+		</button>
+		<button nz-button nzType='default' (click)='modal = false'>关闭</button>
+	</ng-template>
+</nz-modal>

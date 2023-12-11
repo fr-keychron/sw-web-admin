@@ -1,0 +1,244 @@
+<div class="global-container">
+	<common-header title='产品列表'/>
+
+	<div class='global-table-container'>
+		<button
+			nz-button
+			nzType='primary'
+			class='global-add-btn'
+			(click)="add()"
+		>
+			新增
+		</button>
+
+		<nz-table #basicTable [nzData]='tableData' nzShowPagination='false'>
+			<thead>
+				<tr>
+					<th>名称</th>
+					<th>封面</th>
+					<th>类目</th>
+					<th>PID</th>
+					<th>VID</th>
+					<th>VPID</th>
+					<th>备注</th>
+					<th>创建日期</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor='let data of basicTable.data'>
+					<td>{{ data.name }}</td>
+					<td>
+						<div class = 'table-image'>
+							<img [nzSrc]="data.cover | UploadFile " nz-image>
+						</div>
+					</td>
+					<td>{{ data.category | EnumPipe: categoryEnums }}</td>
+					<td>{{ data.pid }}</td>
+					<td>{{ data.vid }}</td>
+					<td>{{ data.vendorProductId }}</td>
+					<td>{{ data.remark }}</td>
+					<td>{{ data.createTime | DatePipe }}</td>
+					<td>
+						<button nz-button nzType="primary" nzSize="small"
+						        (click)="edit(data)"
+						>
+							编辑
+						</button>
+
+						<button nz-button nzType="dashed" nzSize="small"
+						        (click)="firmware(data)"
+						>
+							固件
+						</button>
+
+						<button nz-button nzType="default" nzDanger nzSize="small"
+						        nz-popconfirm
+						        nzPopconfirmTitle="一旦删除，该数据不可恢复"
+						        nzPopconfirmPlacement="top"
+						        (nzOnConfirm)="del(data)"
+						>
+							删除
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</nz-table>
+
+		<div class = 'pagination'>
+			<nz-pagination [nzPageIndex]="query.pageNumber" [nzTotal]="total" nzShowSizeChanger [nzPageSize]="query.pageSize"
+			               (nzPageIndexChange)="pageChange($event,'number')" (nzPageSizeChange)="pageChange($event, 'page')"
+			/>
+		</div>
+	</div>
+</div>
+
+
+
+<nz-modal
+	[(nzVisible)]='modal'
+	[nzTitle]='modalTitle'
+	[nzContent]='modalContent'
+	[nzFooter]='modalFooter'
+	(nzOnCancel)='modal = false'
+>
+	<ng-template #modalTitle>新增/编辑</ng-template>
+
+	<ng-template #modalContent>
+		<div class='global-form'>
+			<form nz-form [formGroup]='form'>
+				<nz-form-item>
+					<nz-form-label [nzSpan]='6' nzRequired>
+						产品名称
+					</nz-form-label>
+					<nz-form-control
+						[nzSpan]='12'
+						nzHasFeedback
+						nzValidatingTip='Validating...'
+						[nzErrorTip]='nameErrTpl'
+					>
+						<input
+							nz-input
+							formControlName='name'
+							placeholder='请输入产品名称'
+						/>
+						<ng-template #nameErrTpl let-control>
+							<ng-container *ngIf="control.hasError('required')">
+								请输入产品名称
+							</ng-container>
+						</ng-template>
+					</nz-form-control>
+				</nz-form-item>
+
+				<nz-form-item>
+					<nz-form-label [nzSpan]='6' nzRequired>
+						产品类目
+					</nz-form-label>
+					<nz-form-control
+						[nzSpan]='12'
+						nzHasFeedback
+						nzValidatingTip='Validating...'
+						[nzErrorTip]='nameErrTpl'
+					>
+						<nz-select formControlName="category" nzPlaceHolder="请选择产品类目">
+							<nz-option *ngFor="let item of categoryEnums" [nzValue]="item.value" [nzLabel]="item.label" />
+						</nz-select>
+
+						<ng-template #nameErrTpl let-control>
+							<ng-container *ngIf="control.hasError('required')">
+								请选择产品类目
+							</ng-container>
+						</ng-template>
+					</nz-form-control>
+				</nz-form-item>
+
+				<nz-form-item>
+					<nz-form-label [nzSpan]='6' nzRequired>
+						VID
+					</nz-form-label>
+					<nz-form-control
+						[nzSpan]='12'
+						nzHasFeedback
+						nzValidatingTip='Validating...'
+						[nzErrorTip]='nameErrTpl'
+					>
+						<input
+							nz-input
+							formControlName='vid'
+							placeholder='请输入VID'
+							(change)="calcVpId()"
+						/>
+						<ng-template #nameErrTpl let-control>
+							<ng-container *ngIf="control.hasError('required')">
+								请输入VID
+							</ng-container>
+						</ng-template>
+					</nz-form-control>
+				</nz-form-item>
+
+				<nz-form-item>
+					<nz-form-label [nzSpan]='6' nzRequired>
+						PID
+					</nz-form-label>
+					<nz-form-control
+						[nzSpan]='12'
+						nzHasFeedback
+						nzValidatingTip='Validating...'
+						[nzErrorTip]='nameErrTpl'
+					>
+						<input
+							nz-input
+							formControlName='pid'
+							(change)="calcVpId()"
+							placeholder='请输入PID'
+						/>
+						<ng-template #nameErrTpl let-control>
+							<ng-container *ngIf="control.hasError('required')">
+								请输入PID
+							</ng-container>
+						</ng-template>
+					</nz-form-control>
+				</nz-form-item>
+
+				<nz-form-item>
+					<nz-form-label [nzSpan]='6' nzRequired>
+						VPID
+					</nz-form-label>
+					<nz-form-control
+						[nzSpan]='12'
+						nzHasFeedback
+						nzValidatingTip='Validating...'
+					>
+						<input
+							nz-input
+							formControlName='vendorProductId'
+						/>
+					</nz-form-control>
+				</nz-form-item>
+
+				<nz-form-item>
+					<nz-form-label [nzSpan]='6'>
+						备注
+					</nz-form-label>
+					<nz-form-control
+						[nzSpan]='12'
+						nzHasFeedback
+						nzValidatingTip='Validating...'
+					>
+						<input
+							nz-input
+							formControlName='remark'
+							placeholder='请输入备注'
+						/>
+					</nz-form-control>
+				</nz-form-item>
+
+				<nz-form-item>
+					<nz-form-label [nzSpan]='6'>
+						封面
+					</nz-form-label>
+					<nz-form-control [nzSpan]='12'>
+						<div class="img-selection" (click)="selectImage()">
+							<img *ngIf="image" [src]="image" alt="">
+							<div *ngIf="!image">选择图片</div>
+							<input type="file" accept="image/*" #imageFile (change)="inputFileChange($event)">
+						</div>
+					</nz-form-control>
+				</nz-form-item>
+			</form>
+		</div>
+	</ng-template>
+
+	<ng-template #modalFooter>
+		<button
+			nz-button
+			nzType='primary'
+			(click)='confirm()'
+			[nzLoading]='isConfirmLoading'
+			[disabled]="!form.valid"
+		>
+			确定
+		</button>
+		<button nz-button nzType='default' (click)='modal = false'>关闭</button>
+	</ng-template>
+</nz-modal>
