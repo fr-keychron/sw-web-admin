@@ -106,6 +106,7 @@ export class ProductComponent implements OnInit {
 				this.modal = false
 				this.msg.success('操作成功')
 				this.getList()
+				this.isConfirmLoading = false
 			}
 			if (data.id) {
 				this.service.productUpdate({data})
@@ -115,6 +116,7 @@ export class ProductComponent implements OnInit {
 					.subscribe(() => success())
 			}
 		}
+		this.isConfirmLoading = true
 		if (val.cover instanceof File) {
 			const data = new FormData()
 			data.append('file', val.cover)
