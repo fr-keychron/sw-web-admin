@@ -21,6 +21,8 @@ export class FirmwareComponent implements OnInit{
 
 	private id: number ;
 
+	private category: number
+
 	public tableData: any[] = []
 
 	public query = new FirmwareQuery()
@@ -51,6 +53,7 @@ export class FirmwareComponent implements OnInit{
 	ngOnInit() {
 		this.route.queryParams.subscribe( (r: any) => {
 			this.id = r.id
+			this.category = r.category
 			this.title = r.name
 			this.query.deviceId  = r.id ;
 			this.form.patchValue({
@@ -68,7 +71,7 @@ export class FirmwareComponent implements OnInit{
 	}
 
 	public getList() {
-		this.service.list(this.query)
+		this.service.list({data: this.query})
 			.subscribe( (r: any) => {
 				this.tableData = r.data.result;
 				this.total = r.data.total
@@ -78,6 +81,13 @@ export class FirmwareComponent implements OnInit{
 	public modal = false
 	public add () {
 		this.modal = true
+		this.form.reset()
+		this.form.patchValue({
+			deviceId: this.id,
+			category: this.category
+		})
+		if( this.inputEle.nativeElement )
+			this.inputEle.nativeElement.value = '' ;
 	}
 
 
@@ -149,7 +159,7 @@ export class FirmwareComponent implements OnInit{
 			this.commonService.uploadBin({data, param: {folder: val.category}})
 				.subscribe((r: any) => submit(r.data))
 		} else {
-			submit(val.cover)
+			submit(val.path)
 		}
 	}
 

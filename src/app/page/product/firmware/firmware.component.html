@@ -15,15 +15,13 @@
 			<tr>
 				<th>固件版本</th>
 				<th>发布日期</th>
-				<th>固件大小</th>
 				<th>操作</th>
 			</tr>
 			</thead>
 			<tbody>
 			<tr *ngFor='let data of basicTable.data'>
 				<td>{{ data.version }}</td>
-				<td>{{ data.createTime | date }}</td>
-				<td>{{ data.size }}KB</td>
+				<td>{{ data.createTime | date:'YYYY/MM/DD' }}</td>
 				<td>
 					<button nz-button nzType="primary" nzSize="small"
 					        (click)="edit(data)"
@@ -93,16 +91,39 @@
 					<nz-form-label [nzSpan]='6' nzRequired>
 						固件
 					</nz-form-label>
-					<nz-form-control [nzSpan]='18'>
-						<div class="img-selection" (click)="selectInput()">
-							<div *ngIf="!firmwareName">选择固件</div>
-							<span *ngIf="firmwareName">
-								{{ firmwareName }}
-							</span>
-							<input type="file" accept=".bin" #inputEle (change)="inputFileChange($event)">
-						</div>
+					<nz-form-control
+						[nzSpan]='18'
+						nzHasFeedback
+						nzValidatingTip='Validating...'
+						[nzErrorTip]='nameErrTpl'
+					>
+						<input
+							nz-input
+							formControlName='path'
+							placeholder='请输入固件地址'
+						/>
+						<ng-template #nameErrTpl let-control>
+							<ng-container *ngIf="control.hasError('required')">
+								请输入固件地址
+							</ng-container>
+						</ng-template>
 					</nz-form-control>
 				</nz-form-item>
+
+<!--				<nz-form-item>-->
+<!--					<nz-form-label [nzSpan]='6' nzRequired>-->
+<!--						固件-->
+<!--					</nz-form-label>-->
+<!--					<nz-form-control [nzSpan]='18'>-->
+<!--						<div class="img-selection" (click)="selectInput()">-->
+<!--							<div *ngIf="!firmwareName">选择固件</div>-->
+<!--							<span *ngIf="firmwareName">-->
+<!--								{{ firmwareName }}-->
+<!--							</span>-->
+<!--							<input type="file" accept=".bin" #inputEle (change)="inputFileChange($event)">-->
+<!--						</div>-->
+<!--					</nz-form-control>-->
+<!--				</nz-form-item>-->
 
 				<nz-form-item>
 					<nz-form-label [nzSpan]='6'>

@@ -6,7 +6,7 @@ export function Get(u: string) {
 	return function(c: any, m: any , p: any) {
 		// const raw = p.value
 		p.value = function(arg: any = {}) {
-			return this.http.get(GLOBAL_CONFIG.HOST + u , arg.data )
+			return this.http.get(GLOBAL_CONFIG.HOST + u , { params: arg.data })
 		}
 	}
 }

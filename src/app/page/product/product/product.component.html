@@ -30,7 +30,7 @@
 					<td>{{ data.name }}</td>
 					<td>
 						<div class = 'table-image'>
-							<img [nzSrc]="data.cover | UploadFile " nz-image>
+							<img *ngIf="data.cover" [nzSrc]="data.cover | UploadFile " nz-image>
 						</div>
 					</td>
 					<td>{{ data.category | EnumPipe: categoryEnums }}</td>
