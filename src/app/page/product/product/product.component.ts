@@ -12,7 +12,6 @@ import {BlobUtil} from "../../../shared/utils/blob";
 class ProductQuery extends Query {
 
 }
-
 @Component({
 	selector: 'product',
 	templateUrl: './product.component.html',
@@ -129,7 +128,7 @@ export class ProductComponent implements OnInit {
 
 	public inputFileChange($event: Event) {
 		const el = $event.target as HTMLInputElement;
-		const files = el.files || [];
+		const files: any = el.files || [];
 		if (!files.length) return
 		const file = files[0]
 		BlobUtil.toDataUri(file)
@@ -162,7 +161,7 @@ export class ProductComponent implements OnInit {
 	}
 
 	public layout(data: any) {
-		this.router.navigate([`merchandise/product/${data.id}/layout`])
+		this.router.navigate([`merchandise/product/${data.vendorProductId}/layout`])
 	}
 
 	public firmware(data: any) {

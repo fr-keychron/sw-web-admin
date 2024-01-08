@@ -1,15 +1,15 @@
-import { CommonModule } from '@angular/common';
-import { NgModule, Type } from '@angular/core';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { DelonACLModule } from '@delon/acl';
-import { DelonFormModule } from '@delon/form';
-import { AlainThemeModule } from '@delon/theme';
+import {CommonModule} from '@angular/common';
+import {NgModule, Type} from '@angular/core';
+import {ReactiveFormsModule, FormsModule} from '@angular/forms';
+import {RouterModule} from '@angular/router';
+import {DelonACLModule} from '@delon/acl';
+import {DelonFormModule} from '@delon/form';
+import {AlainThemeModule} from '@delon/theme';
 
 import {DatePipe} from "./pipe/date.pipe";
-import { SHARED_DELON_MODULES } from './shared-delon.module';
-import { SHARED_ZORRO_MODULES } from './shared-zorro.module';
-import { CommonHeaderComponent } from '../component/common-header/common-header.component';
+import {SHARED_DELON_MODULES} from './shared-delon.module';
+import {SHARED_ZORRO_MODULES} from './shared-zorro.module';
+import {CommonHeaderComponent} from '../component/common-header/common-header.component';
 import {EnumPipe} from "./pipe/enum.pipe";
 import {UploadFile} from "./pipe/uploadFile.pipe";
 import {LoginGuard} from "../routes/login-guard";
@@ -24,11 +24,12 @@ const THIRDMODULES: Array<Type<void>> = [];
 
 const COMPONENTS: Array<Type<void>> = [CommonHeaderComponent];
 const DIRECTIVES: Array<Type<void>> = [];
-const PIPES: Array<Type<void>> =[
+const PIPES: Array<Type<void>> = [
 	DatePipe,
 	EnumPipe,
 	UploadFile
 ]
+
 // #endregion
 
 @NgModule({
@@ -45,8 +46,7 @@ const PIPES: Array<Type<void>> =[
 		// third libs
 		...THIRDMODULES,
 	],
-	providers: [
-	],
+	providers: [],
 	declarations: [
 		// your components
 		...COMPONENTS,
@@ -72,4 +72,5 @@ const PIPES: Array<Type<void>> =[
 
 	],
 })
-export class SharedModule {}
+export class SharedModule {
+}

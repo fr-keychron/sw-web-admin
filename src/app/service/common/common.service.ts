@@ -17,4 +17,7 @@ export class  CommonService{
 
 	@Post('common/upload/bin', 'formData')
 	uploadBin(f: any): Observable<any> | any {}
+
+	@Post('common/upload/key-cover', 'formData')
+	uploadKeyCover(f: any): Observable<any> | any {}
 }

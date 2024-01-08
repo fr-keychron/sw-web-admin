@@ -6,7 +6,11 @@ export function Get(u: string) {
 	return function(c: any, m: any , p: any) {
 		// const raw = p.value
 		p.value = function(arg: any = {}) {
-			return this.http.get(GLOBAL_CONFIG.HOST + u , { params: arg.data })
+			let url = u
+			if( arg.variable) {
+				url = StrUtil.tmpReplace(u, arg.variable)
+			}
+			return this.http.get(GLOBAL_CONFIG.HOST + url , { params: arg.data })
 		}
 	}
 }

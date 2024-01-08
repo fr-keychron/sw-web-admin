@@ -9,11 +9,17 @@ const api = {
 	categoryAll: 'merchandise/category/all' ,
 	categoryDel: 'merchandise/category/#{id}',
 	product: 'merchandise/product',
+	productJson: 'merchandise/product/json',
+	productInfoByVpId: 'merchandise/product/vpId/#{id}',
 	productDel: 'merchandise/product/#{id}'
 }
 
 @Injectable({providedIn: 'root'})
 export class ProductService {
+
+	static VpId(vendorId: number, productId: number) {
+		return vendorId * 65536 + productId;
+	}
 	constructor(
 		private http: HttpClient
 	) {
@@ -53,4 +59,10 @@ export class ProductService {
 
 	@Put(api.product)
 	productUpdate(d?: any): Observable< any > | any {}
+
+	@Put(api.productJson)
+	productUpdateJson(d?: any): Observable< any > | any {}
+
+	@Get(api.productInfoByVpId)
+	productInfoByVpId(d?: any):  Observable< any > | any {}
 }

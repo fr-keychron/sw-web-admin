@@ -1,0 +1,64 @@
+<div class="global-container" style="height: calc(100vh - 64px)">
+	<div class = 'g-flex g-flex-col g-justify-start g-item-start layout-wrapper'>
+		<common-header title='布局设置'/>
+
+		<div class = 'edit-wrapper'>
+			<div class="edit-version">
+				<nz-button-group>
+					<button nz-button [nzType]="currentVersion === 'v2' ? 'primary': 'default'"
+					        (click)="setVersion('v2')"
+					>
+						V2
+					</button>
+					<button nz-button [nzType]="currentVersion === 'v3' ? 'primary': 'default'"
+					        (click)="setVersion('v3')"
+					>
+						V3
+					</button>
+				</nz-button-group>
+			</div>
+
+			<div class = 'empty-json' *ngIf="!jsonData">JSON布局信息为空</div>
+
+			<div class = 'keyboard-layout-wrapper'>
+				<div class='keyboard-wrapper'>
+					<div [ngStyle]="containerStyle.parent">
+						<div class="keyboard-container" [ngStyle]="containerStyle.child">
+							<div class="keycap" *ngFor="let cap of keyCap;let index = index"
+							     [ngClass]="{'keycap-active': index === editKeyIndex }"
+							     [ngStyle]="cap.parent"
+							     (click)="press(index)"
+							>
+								<div [ngStyle]="cap.child" class ='keycap-child'></div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class = 'editor-wrapper' *ngIf="jsonData">
+				<div class = 'edit-section'>
+					<span class = 'edit-title'>背景</span>
+					<div class = 'upload-wrapper'>
+						<img [src]="bgSrc" alt="" *ngIf="bgSrc">
+						<input type="file" accept="image/*" (change)="imgInput($event,'bg')">
+					</div>
+				</div>
+
+				<div class = 'edit-section' *ngIf="editKeyIndex !== undefined">
+					<span class = 'edit-title'>键位</span>
+					<div class = 'upload-wrapper'>
+						<img [src]="keySrc" alt="" *ngIf="keySrc">
+						<input type="file" accept="image/*" (change)="imgInput($event, 'key')">
+					</div>
+				</div>
+			</div>
+			<button nz-button nzType="primary" (click)="submit()" *ngIf="jsonData">提交</button>
+		</div>
+	</div>
+</div>
+<div class='loading-wrapper' *ngIf="loading">
+	<nz-spin nzSimple></nz-spin>
+	<span>加载中...</span>
+</div>
