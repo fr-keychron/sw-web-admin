@@ -55,6 +55,7 @@ export class ProductLayoutComponent implements OnInit {
 	public jsonData: Record<string, any>;
 
 	private loadJson(defaultVal = true) {
+		this.loading = true
 		const dest = !defaultVal ? 'destination' : 'destination_custom'
 		const path = GLOBAL_CONFIG.STATIC + `${dest}/${this.currentVersion}/${this.vpid}.json`;
 		const success = (r: any) => {
@@ -64,6 +65,7 @@ export class ProductLayoutComponent implements OnInit {
 
 		const error = (e: any) => {
 			this.jsonData = null
+			this.loading = false
 		}
 
 		this.http.get(path)
@@ -75,6 +77,13 @@ export class ProductLayoutComponent implements OnInit {
 
 	public setVersion(v: 'v2' | 'v3') {
 		if (this.currentVersion === v) return
+		this.bgSrc = ''
+		this.keySrc = ''
+		this.fileObj = {
+			bg: null,
+			keys: {}
+		}
+		this.keyCap = [] ;
 		this.currentVersion = v;
 		this.loadJson(!this.product?.dest)
 	}

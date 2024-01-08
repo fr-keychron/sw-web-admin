@@ -2,7 +2,7 @@
 	<div class = 'g-flex g-flex-col g-justify-start g-item-start layout-wrapper'>
 		<common-header title='布局设置'/>
 
-		<div class = 'edit-wrapper'>
+		<div class = 'edit-wrapper' >
 			<div class="edit-version">
 				<nz-button-group>
 					<button nz-button [nzType]="currentVersion === 'v2' ? 'primary': 'default'"
@@ -20,7 +20,7 @@
 
 			<div class = 'empty-json' *ngIf="!jsonData">JSON布局信息为空</div>
 
-			<div class = 'keyboard-layout-wrapper'>
+			<div class = 'keyboard-layout-wrapper'  *ngIf="jsonData">
 				<div class='keyboard-wrapper'>
 					<div [ngStyle]="containerStyle.parent">
 						<div class="keyboard-container" [ngStyle]="containerStyle.child">
