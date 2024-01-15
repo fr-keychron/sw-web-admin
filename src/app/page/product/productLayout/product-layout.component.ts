@@ -1,13 +1,13 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, ViewChild} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {ProductService} from "../../../service/product/product.service";
 import {HttpClient} from "@angular/common/http";
 import {GLOBAL_CONFIG} from "../../../config";
 import {Observable, zip} from "rxjs";
 import {CommonService} from "../../../service/common/common.service";
-
-const GetScale = () => parseFloat(getComputedStyle(document.body).fontSize) / 9
-
+import {ImgCacheService} from "../../../service/storage/img-cache.service";
+import {imageEl2Base64, KeyboardComponent} from "../../../component/keyboard/keyboard.component";
+import {MsgService} from "../../../service/msg/msg.service";
 @Component({
 	selector: 'product-layout',
 	templateUrl: './product-layout.component.html',
@@ -18,7 +18,9 @@ export class ProductLayoutComponent implements OnInit {
 		private readonly route: ActivatedRoute,
 		private readonly service: ProductService,
 		private readonly http: HttpClient,
-		private readonly common: CommonService
+		private readonly common: CommonService ,
+		private readonly img : ImgCacheService ,
+		private readonly msg: MsgService
 	) {
 	}
 
@@ -43,6 +45,7 @@ export class ProductLayoutComponent implements OnInit {
 			variable: {id: this.vpid}
 		}).subscribe((r: any) => {
 			const p = r.data.product;
+			this.product = r.data.product
 			this.param.category = p.category
 			this.param.product = p.id;
 			this.loadJson(p.dest)
@@ -54,13 +57,12 @@ export class ProductLayoutComponent implements OnInit {
 
 	public jsonData: Record<string, any>;
 
-	private loadJson(defaultVal = true) {
+	private loadJson(defaultVal:boolean) {
 		this.loading = true
 		const dest = !defaultVal ? 'destination' : 'destination_custom'
 		const path = GLOBAL_CONFIG.STATIC + `${dest}/${this.currentVersion}/${this.vpid}.json`;
 		const success = (r: any) => {
 			this.jsonData = r;
-			this.init()
 		}
 
 		const error = (e: any) => {
@@ -76,6 +78,7 @@ export class ProductLayoutComponent implements OnInit {
 	}
 
 	public setVersion(v: 'v2' | 'v3') {
+		debugger
 		if (this.currentVersion === v) return
 		this.bgSrc = ''
 		this.keySrc = ''
@@ -83,9 +86,8 @@ export class ProductLayoutComponent implements OnInit {
 			bg: null,
 			keys: {}
 		}
-		this.keyCap = [] ;
 		this.currentVersion = v;
-		this.loadJson(!this.product?.dest)
+		this.loadJson(this.product.dest)
 	}
 
 	public bgSrc = '';
@@ -118,7 +120,8 @@ export class ProductLayoutComponent implements OnInit {
 
 	public setBg(u: string) {
 		this.bgSrc = u
-		this.containerStyle.parent.background = `url(${u}) round`
+		this.keyboardComponent.setCase(u)
+
 	}
 
 	public editKeyIndex: number
@@ -127,15 +130,31 @@ export class ProductLayoutComponent implements OnInit {
 		this.editKeyIndex = $event
 		const conf = this.jsonData.layouts.keys[$event]
 		if (conf.bg) {
-			this.keySrc = this.imgCache[this.getKeyCover(conf)].b64
+			this.keySrc = imageEl2Base64(this.img.get('keyboard',KeyboardComponent.getKeyCover(conf)))
 		} else {
 			this.keySrc = '' ;
 		}
 	}
 
+	public load ($e: boolean ) {
+		this.loading = $e;
+		if(!$e && this.jsonData.style) {
+			const conf = this.jsonData.style.bg ;
+			const file = this.img.get('keyboard', GLOBAL_CONFIG.STATIC + conf)
+			this.bgSrc = imageEl2Base64(file)
+		}
+	}
+
+
+	public loadError () {
+		this.jsonData = null
+		this.loading = false
+		this.jsonFile = null
+		this.msg.error('配置加载异常')
+	}
 	public setKey(u: string) {
 		this.keySrc = u
-		this.keyCap[this.editKeyIndex].child.background = `url(${u}) round`
+		this.keyboardComponent.setKeyCap(this.editKeyIndex, u)
 	}
 
 	public submit() {
@@ -188,113 +207,24 @@ export class ProductLayoutComponent implements OnInit {
 
 	public loading = true
 
-	public containerStyle: any = {
-		parent: {},
-		child: {}
-	}
+	@ViewChild('keyboardComponent') keyboardComponent: KeyboardComponent
 
-	public init() {
-		this.loadImg()
-	}
 
-	public imgCache: Record<string, {
-		load: boolean,
-		img: HTMLImageElement,
-		b64: string
-	}> = {}
-	public keyCap: Array<Record<string, any>> = []
-
-	public getKeyCover(conf: any) {
-		const u = conf.w > 3 ? 'space' : conf.w > 1.5 ? 'enter' : 'keycap'
-		const s = conf.w2 ? 'en' : u;
-		const f = conf.ei !== undefined ? 'rotate' : s;
-		return conf.bg ? GLOBAL_CONFIG.STATIC + conf.bg : `/assets/keyboard/${f}.png`
-	}
-
-	public loadImg() {
-		const keys = this.jsonData.layouts.keys;
-		const urlArr: Array<string> = []
-		if (this.jsonData.style && this.jsonData.style.bg) {
-			const s = GLOBAL_CONFIG.STATIC + this.jsonData.style.bg
-			urlArr.push(s);
-			this.imgCache[s] = {load: false, b64: '', img: null}
-		}
-
-		keys.forEach((conf: any) => {
-			const g = this.getKeyCover(conf)
-			if (urlArr.findIndex(i => i === g) === -1) {
-				urlArr.push(g)
-				this.imgCache[g] = {load: false, b64: '', img: null}
+	public jsonFile: File
+	public jsonLoad ($event: Event) {
+		const target = $event.target as HTMLInputElement ;
+		const files = target.files;
+		if( !files.length ) return ;
+		const  fr = new FileReader()
+		fr.onload = (e) => {
+			const data = e.target.result as string
+			try {
+				this.jsonData = JSON.parse(data)
+				this.jsonFile = files[0]
+			} catch (e) {
+				this.loadError()
 			}
-		})
-
-		const obs = urlArr.map(u => {
-			return new Observable(s => {
-				const img = new Image()
-				img.crossOrigin = "anonymous"
-				img.onload = () => {
-					this.imgCache[u].load = true
-					this.imgCache[u].img = img;
-					this.imgCache[u].b64 = this.imageEl2Base64(img)
-					s.next()
-				}
-				img.src = u;
-			})
-		})
-
-		zip(obs)
-			.subscribe(r => {
-				this.loading = false;
-				this.jsonData.layouts.keys.forEach((conf: any) => {
-					const {width, height, gap} = GLOBAL_CONFIG.KeyboardLayout;
-					const w = width * GetScale()
-					const h = height * GetScale()
-					const ww = conf.w2 ? Math.max(conf.w2, conf.w) : conf.w;
-					const hh = conf.h2 ? Math.max(conf.h2, conf.h) : conf.h;
-					const xx = conf.x2 ? conf.x2 + conf.x : conf.x;
-					const yy = conf.y2 ? conf.y2 + conf.y : conf.y
-					const g = this.getKeyCover(conf)
-					this.keyCap.push({
-						parent: {
-							width: ww * w + 'px',
-							height: hh * h + 'px',
-							top: yy * h + 'px',
-							left: xx * w + 'px'
-						},
-						child: {
-							background: `url(${this.imgCache[g].b64}) round`
-						}
-					})
-				})
-				const w = this.jsonData.layouts.width
-					* GLOBAL_CONFIG.KeyboardLayout.width;
-				const h = this.jsonData.layouts.height
-					* GLOBAL_CONFIG.KeyboardLayout.height;
-				const child: any = {
-					width: (w * GetScale()) + 'px',
-					height: (h * GetScale()) + 'px',
-				}
-
-				const parent = {
-					background: 'rgb(79, 79, 79)'
-				}
-				if (this.jsonData.style?.bg) {
-					const img = this.imgCache[GLOBAL_CONFIG.STATIC + this.jsonData.style.bg].b64
-					parent.background = `url(${img}) round`;
-					this.bgSrc = img
-				}
-				this.containerStyle = {child, parent}
-			})
+		}
+		fr.readAsText(files[0])
 	}
-
-	public imageEl2Base64(img: HTMLImageElement): string {
-		const canvas = document.createElement('canvas');
-		const ctx = canvas.getContext('2d');
-		canvas.height = img.height
-		canvas.width = img.width;
-		ctx.drawImage(img, 0, 0);
-		return canvas.toDataURL("image/png")
-	}
-
-	public paintWrapper = {background: '#4f4f4f'}
 }

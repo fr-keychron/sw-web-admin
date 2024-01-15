@@ -1,0 +1,12 @@
+<div class='keyboard-wrapper' [ngStyle]="{background: containerBg}">
+	<div class='keyboard-case' [style]="caseStyle">
+		<div
+			class='keycap'
+			*ngFor="let item of keys;let idx = index"
+			[style]="keycapStlye[idx]?.style"
+			[ngStyle]="keycapStlye[idx]?.bg"
+			(click)="pressKey(idx)"
+		>
+		</div>
+	</div>
+</div>

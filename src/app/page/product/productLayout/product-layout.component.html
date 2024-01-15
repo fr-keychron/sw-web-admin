@@ -18,23 +18,21 @@
 				</nz-button-group>
 			</div>
 
-			<div class = 'empty-json' *ngIf="!jsonData">JSON布局信息为空</div>
+			<div class = 'empty-json' *ngIf="!jsonData">
+				<div class = 'input-wrapper'>
+					<span>点击或拖拽上传配置</span>
+					<input type="file" accept=".json" (change)="jsonLoad($event)">
+				</div>
+			</div>
+
 
 			<div class = 'keyboard-layout-wrapper'  *ngIf="jsonData">
-				<div class='keyboard-wrapper'>
-					<div [ngStyle]="containerStyle.parent">
-						<div class="keyboard-container" [ngStyle]="containerStyle.child">
-							<div class="keycap" *ngFor="let cap of keyCap;let index = index"
-							     [ngClass]="{'keycap-active': index === editKeyIndex }"
-							     [ngStyle]="cap.parent"
-							     (click)="press(index)"
-							>
-								<div [ngStyle]="cap.child" class ='keycap-child'></div>
-							</div>
-						</div>
-					</div>
-
-				</div>
+				<keyboard [json]="jsonData"
+				          (press)="press($event)"
+				          (load)="load($event)"
+				          (error)="loadError()"
+				          #keyboardComponent
+				/>
 			</div>
 
 			<div class = 'editor-wrapper' *ngIf="jsonData">

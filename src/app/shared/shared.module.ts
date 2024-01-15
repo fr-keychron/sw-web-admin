@@ -10,6 +10,7 @@ import {DatePipe} from "./pipe/date.pipe";
 import {SHARED_DELON_MODULES} from './shared-delon.module';
 import {SHARED_ZORRO_MODULES} from './shared-zorro.module';
 import {CommonHeaderComponent} from '../component/common-header/common-header.component';
+import { KeyboardComponent } from '../component/keyboard/keyboard.component'
 import {EnumPipe} from "./pipe/enum.pipe";
 import {UploadFile} from "./pipe/uploadFile.pipe";
 import {LoginGuard} from "../routes/login-guard";
@@ -22,7 +23,7 @@ const THIRDMODULES: Array<Type<void>> = [];
 
 // #region your componets & directives
 
-const COMPONENTS: Array<Type<void>> = [CommonHeaderComponent];
+const COMPONENTS: Array<Type<void>> = [CommonHeaderComponent, KeyboardComponent];
 const DIRECTIVES: Array<Type<void>> = [];
 const PIPES: Array<Type<void>> = [
 	DatePipe,
