@@ -29,13 +29,13 @@ export class KeyboardComponent {
 		if( v ) {
 			try {
 				const w = v.layouts.width
-					* CSSVarObject.keyWidth
+					* CSSVarObject.keyXPos
 				const h = v.layouts.height
-					* CSSVarObject.keyHeight
+					* CSSVarObject.keyYPos
 
 				this.caseStyle = {
-					width: (w * GetScale()) + 'px',
-					height: (h * GetScale()) + 'px',
+					width: w + 'px',
+					height: h  + 'px',
 					position: 'relative'
 				}
 
