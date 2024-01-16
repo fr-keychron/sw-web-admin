@@ -78,7 +78,6 @@ export class ProductLayoutComponent implements OnInit {
 	}
 
 	public setVersion(v: 'v2' | 'v3') {
-		debugger
 		if (this.currentVersion === v) return
 		this.bgSrc = ''
 		this.keySrc = ''
@@ -204,7 +203,6 @@ export class ProductLayoutComponent implements OnInit {
 		run()
 	}
 
-
 	public loading = true
 
 	@ViewChild('keyboardComponent') keyboardComponent: KeyboardComponent
@@ -226,5 +224,30 @@ export class ProductLayoutComponent implements OnInit {
 			}
 		}
 		fr.readAsText(files[0])
+	}
+
+	public modal = false ;
+	public jsonStr = '' ;
+	public editJson ( ) {
+		this.modal = true
+		this.jsonStr = JSON.stringify(this.jsonData, null , 2)
+	}
+
+	public confirm () {
+		try {
+			const json = JSON.parse(this.jsonStr) ;
+			const data = {
+				json: json,
+				vpId: this.vpid,
+				version: this.currentVersion,
+			}
+			this.service.productUpdateJson({data}).subscribe((r: any) => {
+				this.modal = false ;
+				this.jsonData = json ;
+				this.msg.success('保存成功')
+			})
+		} catch (e) {
+			this.msg.error('JSON数据错误')
+		}
 	}
 }

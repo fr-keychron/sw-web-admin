@@ -13,6 +13,8 @@
 		"esModuleInterop": true,
 		"sourceMap": true,
 		"declaration": false,
+		"skipDefaultLibCheck": false,
+		"skipLibCheck": true,
 		"experimentalDecorators": true,
 		"moduleResolution": "node",
 		"importHelpers": true,

@@ -1,0 +1,17 @@
+.form-section {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: flex-start;
+	margin-bottom: 16px;
+	& > .title {
+		font-size: 14px;
+		margin-right: 10px;
+		width: 60px;
+		text-align: right;
+	}
+
+	& .text-area {
+		width: 700px;
+	}
+}

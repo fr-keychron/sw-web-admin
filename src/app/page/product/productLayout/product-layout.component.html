@@ -52,7 +52,11 @@
 					</div>
 				</div>
 			</div>
-			<button nz-button nzType="primary" (click)="submit()" *ngIf="jsonData">提交</button>
+
+			<div class = 'btn-wrapper'>
+				<button nz-button nzType="primary" (click)="submit()" *ngIf="jsonData">提交</button>
+				<button nz-button nzType="default" (click)="editJson()" *ngIf="jsonData">编辑JSON</button>
+			</div>
 		</div>
 	</div>
 </div>
@@ -60,3 +64,31 @@
 	<nz-spin nzSimple></nz-spin>
 	<span>加载中...</span>
 </div>
+
+
+
+<nz-modal
+	[(nzVisible)]='modal'
+	[nzTitle]='modalTitle'
+	[nzContent]='modalContent'
+	[nzFooter]='modalFooter'
+	(nzOnCancel)='modal = false'
+	nzWidth="700px"
+>
+	<ng-template #modalTitle>编辑</ng-template>
+
+	<ng-template #modalContent>
+		<textarea nz-input cols="12" rows="20" [(ngModel)]="jsonStr"></textarea>
+	</ng-template>
+
+	<ng-template #modalFooter>
+		<button
+			nz-button
+			nzType='primary'
+			(click)='confirm()'
+		>
+			确定
+		</button>
+		<button nz-button nzType='default' (click)='modal = false'>关闭</button>
+	</ng-template>
+</nz-modal>

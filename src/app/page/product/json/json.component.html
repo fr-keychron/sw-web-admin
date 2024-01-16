@@ -1,0 +1,27 @@
+<div class="global-container">
+	<common-header [title]='"JSON转换"'/>
+
+	<div class = 'form-section'>
+		<div class = 'title'>
+			协议版本:
+		</div>
+		<div>
+			<nz-radio-group nzButtonStyle="solid" [(ngModel)]="protocol">
+				<label nz-radio-button nzValue="V3">V3</label>
+				<label nz-radio-button nzValue="V2">V2</label>
+			</nz-radio-group>
+		</div>
+	</div>
+	<div class = 'form-section'>
+		<div class = 'title'>
+			JSON:
+		</div>
+		<div>
+			<textarea class = 'text-area' nz-input col="20" rows="14" [(ngModel)]="jsonStr"></textarea>
+		</div>
+	</div>
+
+	<div style="margin-left: 70px">
+		<button nz-button nzType="primary" (click)="trans()">转换</button>
+	</div>
+</div>

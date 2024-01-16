@@ -39,6 +39,7 @@
 		"@delon/mock": "^17.0.2",
 		"@delon/theme": "^17.0.2",
 		"@delon/util": "^17.0.2",
+		"@the-via/reader": "^1.8.0",
 		"moment": "^2.29.4",
 		"ng-alain": "^17.0.2",
 		"ng-zorro-antd": "^17.0.1",
