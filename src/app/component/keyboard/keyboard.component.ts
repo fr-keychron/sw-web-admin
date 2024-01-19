@@ -67,7 +67,8 @@ export class KeyboardComponent {
 		const u = conf.w > 3 ? 'space' : conf.w > 1.5 ? 'enter' : 'keycap'
 		const s = conf.w2 ? 'normalEnter' : u;
 		const f = conf.ei !== undefined ? 'rotate' : s;
-		return conf.bg ? GLOBAL_CONFIG.STATIC + conf.bg : jsonBase[f] ? GLOBAL_CONFIG.STATIC + jsonBase[f] : `/assets/keyboard/${f}.png`;
+		const url = conf.bg ? GLOBAL_CONFIG.STATIC + conf.bg : jsonBase[f] ? GLOBAL_CONFIG.STATIC + jsonBase[f] : `/assets/keyboard/${f}.png`;
+		return { type: f , url }
 	}
 
 	public loading = false
@@ -93,12 +94,16 @@ export class KeyboardComponent {
 			}
 		}
 		dest.layouts.keys.forEach((i: any) => {
-			const cover = KeyboardComponent.getKeyCover(i)
-			const r = Object.keys(dest.style.base).filter( k => {
-				return new RegExp(k,'gi').test(cover)
-			} )
-			if( !r.length ) {
-				arr.push(cover)
+			const cover = KeyboardComponent.getKeyCover(i).url
+			if( dest.style && dest.style.base ) {
+				const r = Object.keys(dest.style.base).filter( k => {
+					return new RegExp(k,'gi').test(cover)
+				} )
+				if( !r.length ) {
+					arr.push(cover)
+				}
+			} else  {
+				if( !arr.includes(cover)) arr.push(cover)
 			}
 		})
 

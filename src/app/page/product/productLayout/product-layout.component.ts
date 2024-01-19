@@ -151,7 +151,7 @@ export class ProductLayoutComponent implements OnInit {
 		this.editKeyIndex = $event
 		const conf = this.jsonData.layouts.keys[$event]
 		if (conf.bg) {
-			this.keySrc = imageEl2Base64(this.img.get('keyboard',KeyboardComponent.getKeyCover(conf)))
+			this.keySrc = imageEl2Base64(this.img.get('keyboard',KeyboardComponent.getKeyCover(conf).url))
 		} else {
 			this.keySrc = '' ;
 		}
@@ -160,7 +160,7 @@ export class ProductLayoutComponent implements OnInit {
 	public load ($e: boolean) {
 		this.loading = $e;
 		const base: any = {
-			keycap: "/assets/keyboard/keycap.png'" ,
+			keycap: "/assets/keyboard/keycap.png" ,
 			space: "/assets/keyboard/space.png" ,
 			enter: "/assets/keyboard/enter.png" ,
 			rotate: "/assets/keyboard/rotate.png" ,
@@ -203,7 +203,7 @@ export class ProductLayoutComponent implements OnInit {
 
 	public setBase(type: any , u: string) {
 		Reflect.set(this.basic,  type , u )
-		this.keyboardComponent.setBaseKey(type, u)
+		this.keyboardComponent.setBaseKey(this.editKeyIndex, u)
 	}
 
 	public submit() {
