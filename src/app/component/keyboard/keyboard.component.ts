@@ -151,7 +151,7 @@ export class KeyboardComponent {
 					transform: `translate(${translateX}px , ${translateY}px) rotate(${rad}rad)`
 				}
 			})
-			conf.url = KeyboardComponent.getKeyCover(conf, this.json?.style?.base)
+			conf.url = KeyboardComponent.getKeyCover(conf, this.json?.style?.base).url
 			if (!this.styleImg[conf.url]) {
 				this.styleImg[conf.url] = imageEl2Base64(this.img.get('keyboard', conf.url))
 			}
