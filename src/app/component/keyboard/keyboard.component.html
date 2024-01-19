@@ -4,7 +4,7 @@
 			class='keycap'
 			*ngFor="let item of keys;let idx = index"
 			[style]="keycapStlye[idx]?.style"
-			[ngStyle]="keycapStlye[idx]?.bg"
+			[ngStyle]="{background: 'url(' + item.url + ')' + 'round'}"
 			(click)="pressKey(idx)"
 		>
 		</div>

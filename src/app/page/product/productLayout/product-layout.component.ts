@@ -81,10 +81,7 @@ export class ProductLayoutComponent implements OnInit {
 		if (this.currentVersion === v) return
 		this.bgSrc = ''
 		this.keySrc = ''
-		this.fileObj = {
-			bg: null,
-			keys: {}
-		}
+		this.resetFileObj()
 		this.currentVersion = v;
 		this.loadJson(this.product.dest)
 	}
@@ -92,7 +89,7 @@ export class ProductLayoutComponent implements OnInit {
 	public bgSrc = '';
 	public keySrc = '';
 
-	public imgInput($event: Event, type: 'bg' | 'key') {
+	public imgInput($event: Event, type: 'bg' | 'key' | 'keycap' | 'space' | 'enter' | 'rotate' | 'normalEnter') {
 		const el = $event.target as HTMLInputElement;
 		const files = el.files;
 		if (!files.length) return;
@@ -108,15 +105,40 @@ export class ProductLayoutComponent implements OnInit {
 				this.fileObj.keys[this.editKeyIndex] = file
 				this.setKey(e.target.result as string)
 			}
+
+			if( ['keycap','space' ,'enter' ,'rotate', 'normalEnter'].includes(type) ) {
+				this.fileObj.base[type] = file
+				this.setBase(type, e.target.result as string)
+			}
 		}
 		fr.readAsDataURL(file)
 	}
 
 	public fileObj: any = {
 		bg: null,
-		keys: {}
+		keys: {},
+		base: {
+			keycap: null,
+			space: null,
+			normalEnter: null,
+			enter: null,
+			rotate: null,
+		}
 	}
 
+	public resetFileObj () {
+		this.fileObj =  {
+			bg: null,
+			keys: {},
+			base: {
+				keycap: null,
+				space: null,
+				normalEnter: null,
+				enter: null,
+				rotate: null,
+			}
+		}
+	}
 	public setBg(u: string) {
 		this.bgSrc = u
 		this.keyboardComponent.setCase(u)
@@ -135,13 +157,35 @@ export class ProductLayoutComponent implements OnInit {
 		}
 	}
 
-	public load ($e: boolean ) {
+	public load ($e: boolean) {
 		this.loading = $e;
+		const base: any = {
+			keycap: "/assets/keyboard/keycap.png'" ,
+			space: "/assets/keyboard/space.png" ,
+			enter: "/assets/keyboard/enter.png" ,
+			rotate: "/assets/keyboard/rotate.png" ,
+			normalEnter: "/assets/keyboard/normalEnter.png"
+		}
 		if(!$e && this.jsonData.style) {
 			const conf = this.jsonData.style.bg ;
 			const file = this.img.get('keyboard', GLOBAL_CONFIG.STATIC + conf)
 			this.bgSrc = imageEl2Base64(file)
+			const b = this.jsonData.style.base
+			if( b ) {
+				Object.keys(b).forEach( i => {
+					if( b[i] ) base[i] = GLOBAL_CONFIG.STATIC+ b[i]
+				})
+			}
 		}
+
+		const style = {
+			keycap: imageEl2Base64(this.img.get('keyboard', base.keycap)) ,
+			space: imageEl2Base64(this.img.get('keyboard', base.space)) ,
+			enter: imageEl2Base64(this.img.get('keyboard', base.enter)) ,
+			rotate: imageEl2Base64(this.img.get('keyboard', base.rotate)) ,
+			normalEnter: imageEl2Base64(this.img.get('keyboard', base.normalEnter)) ,
+		}
+		this.basic = style
 	}
 
 
@@ -156,6 +200,12 @@ export class ProductLayoutComponent implements OnInit {
 		this.keyboardComponent.setKeyCap(this.editKeyIndex, u)
 	}
 
+
+	public setBase(type: any , u: string) {
+		Reflect.set(this.basic,  type , u )
+		this.keyboardComponent.setBaseKey(type, u)
+	}
+
 	public submit() {
 		const taskQueue: Array<Observable<any>> = [];
 		this.loading = true
@@ -166,7 +216,11 @@ export class ProductLayoutComponent implements OnInit {
 				data.append('file', this.fileObj.bg);
 				this.common.uploadKeyCover({data, param: this.param})
 					.subscribe((r: any) => {
-						jsonData.style = {bg: r.data}
+						if( jsonData.style ) {
+							jsonData.style.bg = r.data ;
+						} else {
+							jsonData.style = {bg: r.data}
+						}
 						s.next()
 					})
 			}))
@@ -184,6 +238,27 @@ export class ProductLayoutComponent implements OnInit {
 					})
 			}))
 		})
+
+
+		Object.keys(this.fileObj.base).forEach(k => {
+			const file = this.fileObj.base[k]
+			if( file ) {
+				taskQueue.push(new Observable(s => {
+					const data = new FormData()
+					data.append('file', file);
+					this.common.uploadKeyCover({data, param: this.param})
+						.subscribe((r: any) => {
+							if( jsonData.style && jsonData.style.base ) {
+								jsonData.style.base[k] = r.data ;
+							} else {
+								jsonData.style = { base: {[k]: r.data} }
+							}
+							s.next()
+						})
+				}))
+			}
+		})
+
 
 		const run = () => {
 			if (taskQueue.length) {
@@ -249,5 +324,13 @@ export class ProductLayoutComponent implements OnInit {
 		} catch (e) {
 			this.msg.error('JSON数据错误')
 		}
+	}
+
+	public basic = {
+		keycap: '',
+		space: '',
+		enter: '',
+		rotate: '',
+		normalEnter: ''
 	}
 }

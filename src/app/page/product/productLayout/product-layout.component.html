@@ -35,22 +35,69 @@
 				/>
 			</div>
 
-			<div class = 'editor-wrapper' *ngIf="jsonData">
-				<div class = 'edit-section'>
-					<span class = 'edit-title'>背景</span>
-					<div class = 'upload-wrapper'>
-						<img [src]="bgSrc" alt="" *ngIf="bgSrc">
-						<input type="file" accept="image/*" (change)="imgInput($event,'bg')">
-					</div>
-				</div>
 
-				<div class = 'edit-section' *ngIf="editKeyIndex !== undefined">
-					<span class = 'edit-title'>键位</span>
-					<div class = 'upload-wrapper'>
-						<img [src]="keySrc" alt="" *ngIf="keySrc">
-						<input type="file" accept="image/*" (change)="imgInput($event, 'key')">
-					</div>
-				</div>
+
+			<div class = 'editor-wrapper' *ngIf="jsonData">
+				<nz-tabset>
+					<nz-tab nzTitle="自定义">
+						<div class="editor-container">
+							<div class = 'edit-section'>
+								<span class = 'edit-title'>背景</span>
+								<div class = 'upload-wrapper'>
+									<img [src]="bgSrc" alt="" *ngIf="bgSrc">
+									<input type="file" accept="image/*" (change)="imgInput($event,'bg')">
+								</div>
+							</div>
+
+							<div class = 'edit-section' *ngIf="editKeyIndex !== undefined">
+								<span class = 'edit-title'>键位</span>
+								<div class = 'upload-wrapper'>
+									<img [src]="keySrc" alt="" *ngIf="keySrc">
+									<input type="file" accept="image/*" (change)="imgInput($event, 'key')">
+								</div>
+							</div>
+						</div>
+					</nz-tab>
+					<nz-tab nzTitle="基础">
+						<div class="editor-container">
+							<div class = 'edit-section'>
+								<span class = 'edit-title'>键位</span>
+								<div class = 'upload-wrapper-base'>
+									<img [src]="basic.keycap" >
+									<input type="file" accept="image/*" (change)="imgInput($event,'keycap')">
+								</div>
+							</div>
+							<div class = 'edit-section'>
+								<span class = 'edit-title'>Space</span>
+								<div class = 'upload-wrapper-base'>
+									<img [src]="basic.space" style="width: 200px">
+									<input type="file" accept="image/*" (change)="imgInput($event,'space')">
+								</div>
+							</div>
+							<div class = 'edit-section'>
+								<span class = 'edit-title'>Enter</span>
+								<div class = 'upload-wrapper-base'>
+									<img [src]="basic.normalEnter" >
+									<input type="file" accept="image/*" (change)="imgInput($event,'normalEnter')">
+								</div>
+							</div>
+							<div class = 'edit-section'>
+								<span class = 'edit-title'>Bks</span>
+								<div class = 'upload-wrapper-base'>
+									<img [src]="basic.enter" >
+									<input type="file" accept="image/*" (change)="imgInput($event,'enter')">
+								</div>
+							</div>
+							<div class = 'edit-section' *ngIf="basic.rotate">
+								<span class = 'edit-title'>Rotate</span>
+								<div class = 'upload-wrapper-base'>
+									<img [src]="basic.rotate" >
+									<input type="file" accept="image/*" (change)="imgInput($event,'rotate')">
+								</div>
+							</div>
+						</div>
+					</nz-tab>
+				</nz-tabset>
 			</div>
 
 			<div class = 'btn-wrapper'>

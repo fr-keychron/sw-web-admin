@@ -1,8 +1,11 @@
 import {Component, EventEmitter, Input, Output} from "@angular/core";
 import {CSSVarObject, GLOBAL_CONFIG} from "../../config";
 import {ImgCacheService} from "../../service/storage/img-cache.service";
+import {style} from "@angular/animations";
+
 export const GetScale = () => parseFloat(getComputedStyle(document.body).fontSize) / 9
 export const imageEl2Base64 = (img: HTMLImageElement): string => {
+	if (!img) return ''
 	const canvas = document.createElement('canvas');
 	const ctx = canvas.getContext('2d');
 	canvas.height = img.height
@@ -12,21 +15,22 @@ export const imageEl2Base64 = (img: HTMLImageElement): string => {
 }
 
 @Component({
-	selector: "keyboard" ,
+	selector: "keyboard",
 	templateUrl: './keyboard.component.html',
 	styleUrls: ['./keyboard.component.scss']
 })
 export class KeyboardComponent {
-	private _json: Record<string, any> ;
+	private _json: Record<string, any>;
 
 	constructor(
 		private img: ImgCacheService
 	) {
 	}
+
 	@Input()
-	public set json (v: Record<string, any>) {
-		this._json = v ;
-		if( v ) {
+	public set json(v: Record<string, any>) {
+		this._json = v;
+		if (v) {
 			try {
 				const w = v.layouts.width
 					* CSSVarObject.keyXPos
@@ -35,7 +39,7 @@ export class KeyboardComponent {
 
 				this.caseStyle = {
 					width: w + 'px',
-					height: h  + 'px',
+					height: h + 'px',
 					position: 'relative'
 				}
 
@@ -53,30 +57,51 @@ export class KeyboardComponent {
 
 	public keys: any[] = []
 
-	public get json () {
-		return this._json ;
+	public get json() {
+		return this._json;
 	}
 
 	public caseStyle: Record<string, any> = {}
-	static getKeyCover(conf: any) {
+
+	static getKeyCover(conf: any, jsonBase: any = {}) {
 		const u = conf.w > 3 ? 'space' : conf.w > 1.5 ? 'enter' : 'keycap'
-		const s = conf.w2 ? 'en' : u;
+		const s = conf.w2 ? 'normalEnter' : u;
 		const f = conf.ei !== undefined ? 'rotate' : s;
-		return conf.bg ? GLOBAL_CONFIG.STATIC + conf.bg : `/assets/keyboard/${f}.png`;
+		return conf.bg ? GLOBAL_CONFIG.STATIC + conf.bg : jsonBase[f] ? GLOBAL_CONFIG.STATIC + jsonBase[f] : `/assets/keyboard/${f}.png`;
 	}
 
 	public loading = false
 
 	public containerBg = '#4f4f4f'
+
 	public loadImg() {
 		this.loading = true
 		this.load.next(this.loading)
 		const dest = this.json
 		const arr: Array<string> = [];
-		if (dest.style && dest.style.bg) {
-			arr.push(GLOBAL_CONFIG.STATIC + dest.style.bg)
+		if (dest.style) {
+			if( dest.style.bg ) {
+				arr.push(GLOBAL_CONFIG.STATIC + dest.style.bg)
+			}
+
+			if(dest.style.base) {
+				Object.keys(dest.style.base).forEach( k => {
+					if( dest.style.base[k]) {
+						arr.push(GLOBAL_CONFIG.STATIC + dest.style.base[k])
+					}
+				})
+			}
 		}
-		dest.layouts.keys.forEach((i: any) => arr.push(KeyboardComponent.getKeyCover(i)))
+		dest.layouts.keys.forEach((i: any) => {
+			const cover = KeyboardComponent.getKeyCover(i)
+			const r = Object.keys(dest.style.base).filter( k => {
+				return new RegExp(k,'gi').test(cover)
+			} )
+			if( !r.length ) {
+				arr.push(cover)
+			}
+		})
+
 		this.img.load('keyboard', arr)
 			.subscribe(r => {
 				this.loading = false
@@ -92,9 +117,9 @@ export class KeyboardComponent {
 	}
 
 	public keycapStlye: any[] = []
-	public calcKeycapStyle () {
-		this.keys.forEach( conf => {
-			const el = this.img.get('keyboard', KeyboardComponent.getKeyCover(conf))
+
+	public calcKeycapStyle() {
+		this.keys.forEach((conf, idx) => {
 			const pos = this.calculatePointPosition(conf);
 			const w = CSSVarObject.keyWidth
 			const h = CSSVarObject.keyHeight
@@ -115,17 +140,20 @@ export class KeyboardComponent {
 			const rad = (conf.r * (2 * Math.PI)) / 360;
 
 			this.keycapStlye.push({
-				style:  {
+				style: {
 					width: (ww * CSSVarObject.keyXPos - CSSVarObject.keyXSpacing) + 'px',
 					height: (hh * CSSVarObject.keyYPos - CSSVarObject.keyYSpacing) + 'px',
 					transform: `translate(${translateX}px , ${translateY}px) rotate(${rad}rad)`
-				},
-				bg:  {
-					background: `url(${imageEl2Base64(el)}) round`
 				}
 			})
+			conf.url = KeyboardComponent.getKeyCover(conf, this.json?.style?.base)
+			if (!this.styleImg[conf.url]) {
+				this.styleImg[conf.url] = imageEl2Base64(this.img.get('keyboard', conf.url))
+			}
 		})
 	}
+
+	public styleImg: any = {}
 
 	private calculatePointPosition({
 		                               x = 0,
@@ -163,12 +191,19 @@ export class KeyboardComponent {
 	}
 
 	public setCase(img: string) {
-		this.containerBg = `url(${img}) round` ;
+		this.containerBg = `url(${img}) round`;
 	}
 
-	public setKeyCap(i:number, img: string) {
+	public setKeyCap(i: number, img: string) {
 		this.keycapStlye[i].bg = {
 			background: `url(${img}) round`
 		}
 	}
+
+	public setBaseKey(type: any, img: string) {
+		const url = `/assets/keyboard/${type}.png`
+		this.styleImg[url] = img
+	}
+
+	protected readonly style = style;
 }
