@@ -67,14 +67,14 @@
 									<input type="file" accept="image/*" (change)="imgInput($event,'keycap')">
 								</div>
 							</div>
-							<div class = 'edit-section'>
+							<div class = 'edit-section' *ngIf="basic.space">
 								<span class = 'edit-title'>Space</span>
 								<div class = 'upload-wrapper-base'>
 									<img [src]="basic.space" style="width: 200px">
 									<input type="file" accept="image/*" (change)="imgInput($event,'space')">
 								</div>
 							</div>
-							<div class = 'edit-section'>
+							<div class = 'edit-section' *ngIf="basic.normalEnter">
 								<span class = 'edit-title'>Enter</span>
 								<div class = 'upload-wrapper-base'>
 									<img [src]="basic.normalEnter" >
