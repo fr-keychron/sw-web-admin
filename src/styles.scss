@@ -2,14 +2,17 @@ html, body {
 	font-size: 1vh !important;
 }
 
-.global-container{
+.global-container {
 	background: #fefefe;
 	min-height: calc(100vh - 64px);
 	box-sizing: border-box;
 	padding: 20px;
+	width: 100%;
+
 }
 
 .global-table-container {
+	overflow: hidden;
 	& > .global-add-btn {
 		width: 100px;
 		margin-bottom: 6px;
@@ -35,9 +38,11 @@ html, body {
 .g-flex {
 	display: flex;
 }
-.g-flex-wrap{
+
+.g-flex-wrap {
 	flex-wrap: wrap;
 }
+
 .g-flex-row {
 	flex-direction: row;
 }
@@ -96,4 +101,8 @@ g-justify-stretch {
 	.alain-default__content {
 		margin-left: 200px !important;
 	}
+}
+.table-scroll {
+	width: 100%;
+	overflow-x: auto;
 }

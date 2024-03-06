@@ -64,8 +64,8 @@ export class UserLoginComponent {
 	form = this.fb.nonNullable.group({
 		// userName: ['', [Validators.required]],
 		// password: ['', [Validators.required]],
-		userName: ['keychromAdmin', [Validators.required]],
-		password: ['keychron@2023Admin', [Validators.required]],
+		userName: ['', [Validators.required]],
+		password: ['', [Validators.required]],
 		remember: [true],
 	});
 	error = '';

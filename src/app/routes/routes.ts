@@ -20,6 +20,10 @@ export const routes: Routes = [
 				path: 'merchandise',
 				loadChildren: () =>
 					import('../page/product/product.module').then((m) => m.ProductModule),
+			},{
+				path: 'logistics',
+				loadChildren: () =>
+					import('../page/logistics/logistics.module').then((m) => m.LogisticsModule),
 			},
 		],
 	}, {

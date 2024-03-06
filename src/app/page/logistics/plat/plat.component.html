@@ -1,0 +1,36 @@
+<div class='global-container'>
+	<common-header title='物流订单列表'/>
+	<div class='global-table-container'>
+		<div class="table-scroll global-scroll">
+			<div class="table-wrapper">
+				<nz-table #basicTable [nzData]='tableData' nzShowPagination='false'>
+					<thead>
+					<tr>
+						<th *ngFor="let item of th" [nzWidth]="item.width + 'px'">
+							{{ item.name }}
+						</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr *ngFor='let data of basicTable.data'>
+						<td *ngFor="let item of th">
+							{{ data[item.field] }}
+						</td>
+					</tr>
+					</tbody>
+				</nz-table>
+			</div>
+		</div>
+
+		<div class="page">
+			<nz-pagination [nzPageIndex]="query.pageNumber"
+			               [nzTotal]="total"
+			               nzShowQuickJumper
+			               nzShowSizeChanger
+			               (nzPageSizeChange)="sizeChange($event,'size')"
+			               (nzPageIndexChange)="sizeChange($event,'page')"
+			>
+			</nz-pagination>
+		</div>
+	</div>
+</div>
