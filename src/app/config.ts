@@ -1,5 +1,5 @@
-const host = 'http://localhost:4001/'
-// const host = 'http://47.254.44.78:4001/'
+// const host = 'http://localhost:4001/'
+const host = 'http://47.254.44.78:4001/'
 const gap = 2
 
 export const GetScale = () => parseFloat(getComputedStyle(document.body).fontSize) / 9
