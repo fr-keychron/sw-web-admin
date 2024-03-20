@@ -45,9 +45,9 @@
 						<td>{{ data.sku }}</td>
 						<td>{{ data.name }}</td>
 						<td>{{ data.count }}</td>
-						<td>{{ data.payNo }}</td>
 						<td>{{ data.payAmount }}</td>
 						<td>{{ data.orderAmount }}</td>
+						<td>{{ data.payNo }}</td>
 						<td>{{ data.orderState }}</td>
 						<td>{{ data.refund }}</td>
 						<td>{{ data.deliveryType }}</td>
@@ -113,6 +113,20 @@
 						</nz-select>
 					</nz-form-control>
 				</nz-form-item>
+
+				<nz-form-item *ngIf="form.value.plat === 'JD' && form.value.shop === 0 ">
+					<nz-form-label [nzSpan]="5" nzFor="provider" nzRequired>签约公司</nz-form-label>
+					<nz-form-control [nzSpan]="12" nzErrorTip="Please select your provider!">
+						<nz-select
+							formControlName="provider"
+							nzPlaceHolder="请选择签约公司"
+							(ngModelChange)="platChange($event)"
+						>
+							<nz-option *ngFor="let item of jdProviderEnum" [nzLabel]="item.label" [nzValue]="item.value"/>
+						</nz-select>
+					</nz-form-control>
+				</nz-form-item>
+
 				<nz-form-item>
 					<nz-form-label [nzSpan]="5" nzFor="shop" nzRequired>订单EXCEL</nz-form-label>
 					<nz-form-control [nzSpan]="12" nzErrorTip="Please select your gender!">
@@ -128,6 +142,15 @@
 						<div class="input-wrapper">
 							<span>{{ file.file2 }}</span>
 							<input type="file" (change)="fileChange($event,'file2')">
+						</div>
+					</nz-form-control>
+				</nz-form-item>
+				<nz-form-item *ngIf="form.value.plat === 'JD'">
+					<nz-form-label [nzSpan]="5" nzFor="shop" nzRequired>物流EXCEL</nz-form-label>
+					<nz-form-control [nzSpan]="12" nzErrorTip="Please select your gender!">
+						<div class="input-wrapper">
+							<span>{{ file.file3 }}</span>
+							<input type="file" (change)="fileChange($event,'file3')">
 						</div>
 					</nz-form-control>
 				</nz-form-item>

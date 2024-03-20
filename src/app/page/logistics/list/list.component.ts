@@ -2,6 +2,8 @@ import {Component, OnInit} from "@angular/core";
 import {LogisticsService} from "../../../service/logistics/logistics.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {MsgService} from "../../../service/msg/msg.service";
+import {Enums} from "../../../model";
+import {formatMask} from "@delon/util";
 
 @Component({
 	selector: 'list',
@@ -19,6 +21,7 @@ export class ListComponent implements OnInit {
 	ngOnInit() {
 		this.getList()
 		this.getPlats()
+		this.jdProvider()
 	}
 
 	public tableData: any[] = [];
@@ -68,8 +71,10 @@ export class ListComponent implements OnInit {
 	public form: FormGroup = this.fb.group({
 		plat: [null, [Validators.required]],
 		shop: [null, [Validators.required]],
+		provider: [null],
 		file1: [null, [Validators.required]],
-		file2: [null, Validators.required]
+		file2: [null, Validators.required],
+		file3: [null]
 	})
 
 	public record() {
@@ -82,8 +87,12 @@ export class ListComponent implements OnInit {
 	public submit() {
 		const formData = new FormData()
 		const val = this.form.value;
-		formData.append('files', val.file1)
-		formData.append('files', val.file2)
+		formData.append('order', val.file1)
+		formData.append('payment', val.file2)
+		if (val.plat === 'JD') {
+			formData.append('ship', val.file3)
+			formData.append('provider', val.provider)
+		}
 		formData.append('plat', val.plat)
 		formData.append('shop', val.shop)
 		// this.loading = true
@@ -98,7 +107,8 @@ export class ListComponent implements OnInit {
 
 	public file: Record<string, any> = {
 		file1: '点击或者拖入文件',
-		file2: '点击或者拖入文件'
+		file2: '点击或者拖入文件',
+		file3: '点击或者拖入文件',
 	}
 
 	public fileChange($event: Event, name: string) {
@@ -117,5 +127,17 @@ export class ListComponent implements OnInit {
 	public platChange($event: any) {
 		const plat = this.platEnums.find(i => i.value === $event);
 		if (plat) this.shopEnums = plat.shops;
+	}
+
+
+	public jdProviderEnum: Enums = []
+
+	public jdProvider() {
+		this.service.jdProvider()
+			.subscribe((r: any) => {
+				this.jdProviderEnum = r.data.map((d: any, i: number) => {
+					return {label: d.name, value: i}
+				})
+			})
 	}
 }

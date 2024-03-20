@@ -7,7 +7,8 @@ const api = {
 	provider: 'logistics/provider',
 	list: 'logistics/all',
 	raw: 'logistics/all/#{p}/#{s}',
-	plats: "logistics/all/plats"
+	plats: "logistics/all/plats",
+	jd: "logistics/all/jd"
 };
 
 @Injectable({providedIn: 'root'})
@@ -35,5 +36,9 @@ export class LogisticsService {
 
 	@Get(api.plats)
 	plats(): Observable<any> | any {
+	} ;
+
+	@Get(api.jd)
+	jdProvider(): Observable<any> | any {
 	} ;
 }
