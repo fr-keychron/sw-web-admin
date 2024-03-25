@@ -95,11 +95,11 @@ export class ListComponent implements OnInit {
 		}
 		formData.append('plat', val.plat)
 		formData.append('shop', val.shop)
-		// this.loading = true
+		this.loading = true
 		this.service.post({data: formData})
 			.subscribe((r: any) => {
-				// this.loading = false
-				// this.modal = false
+				this.loading = false
+				this.modal = false
 				this.msg.success('添加成功')
 				this.getList()
 			})
