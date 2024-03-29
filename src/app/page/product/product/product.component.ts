@@ -10,7 +10,7 @@ import {ProductService} from "../../../service/product/product.service";
 import {BlobUtil} from "../../../shared/utils/blob";
 
 class ProductQuery extends Query {
-
+	name: ""
 }
 @Component({
 	selector: 'product',
@@ -29,7 +29,7 @@ export class ProductComponent implements OnInit {
 	}
 
 	public tableData: any[] = []
-	public total = 0
+	public total  = 0
 	public query = new ProductQuery()
 
 	public form: FormGroup = this.fb.group({
@@ -52,6 +52,10 @@ export class ProductComponent implements OnInit {
 		return vendorId * 65536 + productId;
 	}
 
+	public clear () {
+		this.query.name = '' ;
+		this.getList()
+	}
 	public getList() {
 		this.service.productList({data: this.query})
 			.subscribe((r: any) => {
@@ -73,7 +77,7 @@ export class ProductComponent implements OnInit {
 	}
 
 	public pageChange($event: number, type: string) {
-		if (type === 'size') this.query.pageSize = $event
+		if (type === 'page') this.query.pageSize = $event
 		if (type === 'number') this.query.pageNumber = $event
 		this.getList()
 	}

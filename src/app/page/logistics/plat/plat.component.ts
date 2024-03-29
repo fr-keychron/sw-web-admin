@@ -52,7 +52,19 @@ export class PlatComponent implements OnInit {
 			})
 	}
 
-	public modal = false
 	public th: any[] = []
 	public total = 0
+
+	public modal = false
+
+	public express: any[] = [] ;
+	public checkLogistics (item: any) {
+		this.modal = true
+		this.express = [] ;
+		try {
+			this.express = JSON.parse(item.express);
+		} catch (e) {
+			this.express = [] ;
+		}
+	}
 }

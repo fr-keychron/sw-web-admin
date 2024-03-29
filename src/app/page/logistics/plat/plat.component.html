@@ -9,12 +9,16 @@
 						<th *ngFor="let item of th" [nzWidth]="item.width + 'px'">
 							{{ item.name }}
 						</th>
+						<th>操作</th>
 					</tr>
 					</thead>
 					<tbody>
 					<tr *ngFor='let data of basicTable.data'>
 						<td *ngFor="let item of th">
 							{{ data[item.field] }}
+						</td>
+						<td>
+							<div *ngIf="data.express" class="logistics" (click)="checkLogistics(data)">查看物流</div>
 						</td>
 					</tr>
 					</tbody>
@@ -34,3 +38,26 @@
 		</div>
 	</div>
 </div>
+
+
+<nz-modal
+	[(nzVisible)]="modal"
+	[nzTitle]="modalTitle"
+	[nzContent]="modalContent"
+	[nzFooter]="modalFooter"
+	(nzOnCancel)="modal=false"
+	nzWidth="800px"
+>
+	<ng-template #modalTitle>物流信息</ng-template>
+
+	<ng-template #modalContent>
+		<div class="mailInfo" *ngFor="let item of express">
+			<div style="width: 200px">时间: {{ item.acceptTime }}</div>
+			<div style="flex: 1">{{ item.remark }}</div>
+		</div>
+	</ng-template>
+
+	<ng-template #modalFooter>
+		<button nz-button nzType="default" (click)="modal = false">关闭</button>
+	</ng-template>
+</nz-modal>

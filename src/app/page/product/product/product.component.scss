@@ -36,3 +36,13 @@
 		height: auto;
 	}
 }
+
+.search-wrapper {
+	margin-bottom: 20px;
+	& > .search-item {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
+	}
+}
