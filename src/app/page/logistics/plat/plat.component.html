@@ -18,7 +18,7 @@
 							{{ data[item.field] }}
 						</td>
 						<td>
-							<div *ngIf="data.express" class="logistics" (click)="checkLogistics(data)">查看物流</div>
+							<div *ngIf="data.express && data.express !== '[]'" class="logistics" (click)="checkLogistics(data)">查看物流</div>
 						</td>
 					</tr>
 					</tbody>
