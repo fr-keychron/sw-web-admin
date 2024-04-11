@@ -13,6 +13,7 @@
 			<thead>
 				<tr>
 					<th>类目</th>
+					<th>设备类型</th>
 					<th>备注</th>
 					<th>创建日期</th>
 					<th>操作</th>
@@ -21,6 +22,7 @@
 			<tbody>
 				<tr *ngFor='let data of basicTable.data'>
 					<td>{{ data.name }}</td>
+					<td>{{ data.type === 0 ? '键盘' : '鼠标' }}</td>
 					<td>{{ data.remark }}</td>
 					<td>{{ data.createTime | DatePipe }}</td>
 					<td>
@@ -43,7 +45,7 @@
 		</nz-table>
 		<div class = 'pagination'>
 			<nz-pagination [nzPageIndex]="query.pageNumber" [nzTotal]="total" nzShowSizeChanger [nzPageSize]="query.pageSize"
-			               (nzPageIndexChange)="pageChange($event,'number')" (nzPageSizeChange)="pageChange($event, 'page')"
+			               (nzPageIndexChange)="pageChange($event,'number')" (nzPageSizeChange)="pageChange($event, 'size')"
 			/>
 		</div>
 	</div>
@@ -83,6 +85,30 @@
 						</ng-template>
 					</nz-form-control>
 				</nz-form-item>
+
+				<nz-form-item>
+					<nz-form-label [nzSpan]='6' nzRequired>
+						设备类型
+					</nz-form-label>
+					<nz-form-control
+						[nzSpan]='12'
+						nzHasFeedback
+						nzValidatingTip='Validating...'
+						[nzErrorTip]='nameErrTpl'
+					>
+						<nz-select formControlName="type" nzPlaceHolder="请选择设备类型">
+							<nz-option nzValue="0" nzLabel="键盘" />
+							<nz-option nzValue="1" nzLabel="鼠标" />
+						</nz-select>
+
+						<ng-template #nameErrTpl let-control>
+							<ng-container *ngIf="control.hasError('required')">
+								请选择设备类型
+							</ng-container>
+						</ng-template>
+					</nz-form-control>
+				</nz-form-item>
+
 				<nz-form-item>
 					<nz-form-label [nzSpan]='6'>
 						备注
