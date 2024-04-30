@@ -1,6 +1,5 @@
 import { Component, OnInit } from "@angular/core";
 import { BugService } from "../../../service/bug/buglist.service";
-import { NzInputModule } from 'ng-zorro-antd/input';
 
 @Component({
 	selector: 'list',
@@ -17,9 +16,9 @@ export class BugListComponent implements OnInit {
 		this.getList()
 	}
 
-	public tableData: any[] = [];
-	public total: number = 0;
-	public columns: any[] = [{
+	tableData: any[] = [];
+	total: number = 0;
+	columns: any[] = [{
 		code: 'title',
 		name: '标题',
 		width: '180px'
@@ -39,15 +38,21 @@ export class BugListComponent implements OnInit {
 		code: 'pid',
 		name: '设备ID',
 		width: '100px'
+	}, {
+		code: 'createTime',
+		name: '提交日期',
+		width: '180px'
 	}
 	]
 
-	public query = {
+	query = {
 		pageSize: 10,
-		pageNumber: 1
+		pageNumber: 1,
+		device: '',
+		pid: ''
 	}
 
-	public getList() {
+	getList() {
 		this.service.list({ data: this.query })
 			.subscribe((r: any) => {
 				this.tableData = r.data.result;
@@ -55,9 +60,14 @@ export class BugListComponent implements OnInit {
 			})
 	}
 
-	public sizeChange($event: number, type: 'size' | 'index') {
-		if (type === 'size') this.query.pageSize = $event
+	sizeChange($event: number, type: 'size' | 'index') {
+		if (type === 'size') this.query.pageSize = $event;
 		if (type === 'index') this.query.pageNumber = $event;
-		this.getList()
+		this.getList();
+	}
+
+	clear() {
+		this.query.device = '';
+		this.query.pid = '';
 	}
 }

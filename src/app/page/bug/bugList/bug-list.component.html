@@ -1,31 +1,67 @@
 <div class='global-container'>
 	<common-header title='BUG列表' />
+	<!-- 查询表单 -->
+	<form nz-form>
+		<div nz-row [nzGutter]="32">
+      <div nz-col class="gutter-row" [nzSpan]="6">
+				<nz-form-item>
+					<nz-form-control [nzSpan]="22">
+						<input nz-input placeholder="设备名称" [(ngModel)]="query.device" name="device" />
+					</nz-form-control>
+				</nz-form-item>
+			</div>
+      <div nz-col class="gutter-row" [nzSpan]="6">
+				<nz-form-item>
+					<nz-form-control [nzSpan]="22">
+						<input nz-input placeholder="设备ID" [(ngModel)]="query.pid" name="pid" />
+					</nz-form-control>
+				</nz-form-item>
+			</div>
+      <div nz-col class="gutter-row" [nzSpan]="6">
+				<button
+					nz-button
+					nzType='primary'
+					class='global-add-btn'
+					(click)="getList()"
+				>
+					搜索
+				</button>
+				<button
+					nz-button
+					nzType='primary'
+					class='global-add-btn'
+					(click)="clear()"
+					style="margin-left: 5px;"
+				>
+					清空
+				</button>
+			</div>
+    </div>
+	</form>
 
+	<!-- 列表 -->
 	<div class='global-table-container'>
-
 		<div class="table-scroll global-scroll">
 			<div class="table-wrapper">
 				<nz-table #basicTable [nzData]='tableData' nzShowPagination='false' [nzPageSize]="query.pageSize">
 					<thead>
 						<tr>
-							<th *ngFor="let col of columns" [nzWidth]="col.width || '150px'" nzAlign="center">
+							<th *ngFor="let col of columns" [nzWidth]="col.width" nzAlign="center">
 								{{col.name}}
-							</th>
-							<th nzWidth="150px" nzAlign="center">
-								提交时间
 							</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr *ngFor='let data of basicTable.data'>
-							<td *ngFor="let col of columns" nzAlign="center">{{data[col.code]}}</td>
-							<td nzAlign="center">{{data.createTime | DatePipe}}</td>
+							<td *ngFor="let col of columns" nzAlign="center">
+								{{col.code == 'createTime' ? (data[col.code] | DatePipe) : data[col.code]}}
+							</td>
 						</tr>
 					</tbody>
 				</nz-table>
 			</div>
 		</div>
-
+		<!-- 分页 -->
 		<div class="page">
 			<nz-pagination [nzPageIndex]="query.pageNumber" [nzTotal]="total" nzShowQuickJumper nzShowSizeChanger
 				(nzPageSizeChange)="sizeChange($event,'size')" (nzPageIndexChange)="sizeChange($event,'index')">
