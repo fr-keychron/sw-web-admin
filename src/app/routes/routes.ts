@@ -24,7 +24,11 @@ export const routes: Routes = [
 				path: 'logistics',
 				loadChildren: () =>
 					import('../page/logistics/logistics.module').then((m) => m.LogisticsModule),
-			},
+			},{
+				path: 'bug',
+				loadChildren: () =>
+					import('../page/bug/bug.module').then((m) => m.BugModule),
+			}
 		],
 	}, {
 		path: '',
